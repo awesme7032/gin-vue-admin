@@ -96,7 +96,7 @@ func PreviewTemp(autoCode model.AutoCodeStruct) (map[string]string, error) {
 //@function: CreateTemp
 //@description: 创建代码
 //@param: model.AutoCodeStruct
-//@return: error
+//@return: err error
 
 func CreateTemp(autoCode model.AutoCodeStruct) (err error) {
 	dataList, fileList, needMkdir, err := getNeedList(&autoCode)
@@ -146,6 +146,11 @@ func CreateTemp(autoCode model.AutoCodeStruct) (err error) {
 		if err != nil {
 			return err
 		}
+		if global.GVA_CONFIG.AutoCode.TransferRestart {
+			go func() {
+				_ = utils.Reload()
+			}()
+		}
 		return errors.New("创建代码成功并移动文件成功")
 	} else { // 打包
 		if err := utils.ZipFiles("./ginvueadmin.zip", fileList, ".", "."); err != nil {
@@ -181,9 +186,8 @@ func GetAllTplFile(pathName string, fileList []string) ([]string, error) {
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetTables
 //@description: 获取数据库的所有表名
-//@param: pathName string
-//@param: fileList []string
-//@return: []string, error
+//@param: dbName string
+//@return: err error, TableNames []request.TableReq
 
 func GetTables(dbName string) (err error, TableNames []request.TableReq) {
 	err = global.GVA_DB.Raw("select table_name as table_name from information_schema.tables where table_schema = ?", dbName).Scan(&TableNames).Error
@@ -193,9 +197,7 @@ func GetTables(dbName string) (err error, TableNames []request.TableReq) {
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetDB
 //@description: 获取数据库的所有数据库名
-//@param: pathName string
-//@param: fileList []string
-//@return: []string, error
+//@return: err error, DBNames []request.DBReq
 
 func GetDB() (err error, DBNames []request.DBReq) {
 	err = global.GVA_DB.Raw("SELECT SCHEMA_NAME AS `database` FROM INFORMATION_SCHEMA.SCHEMATA;").Scan(&DBNames).Error
@@ -205,9 +207,8 @@ func GetDB() (err error, DBNames []request.DBReq) {
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: GetDB
 //@description: 获取指定数据库和指定数据表的所有字段名,类型值等
-//@param: pathName string
-//@param: fileList []string
-//@return: []string, error
+//@param: tableName string, dbName string
+//@return: err error, Columns []request.ColumnReq
 
 func GetColumn(tableName string, dbName string) (err error, Columns []request.ColumnReq) {
 	err = global.GVA_DB.Raw("SELECT COLUMN_NAME column_name,DATA_TYPE data_type,CASE DATA_TYPE WHEN 'longtext' THEN c.CHARACTER_MAXIMUM_LENGTH WHEN 'varchar' THEN c.CHARACTER_MAXIMUM_LENGTH WHEN 'double' THEN CONCAT_WS( ',', c.NUMERIC_PRECISION, c.NUMERIC_SCALE ) WHEN 'decimal' THEN CONCAT_WS( ',', c.NUMERIC_PRECISION, c.NUMERIC_SCALE ) WHEN 'int' THEN c.NUMERIC_PRECISION WHEN 'bigint' THEN c.NUMERIC_PRECISION ELSE '' END AS data_type_long,COLUMN_COMMENT column_comment FROM INFORMATION_SCHEMA.COLUMNS c WHERE table_name = ? AND table_schema = ?", tableName, dbName).Scan(&Columns).Error
@@ -264,7 +265,7 @@ func addAutoMoveFile(data *tplData) {
 //@function: CreateApi
 //@description: 自动创建api数据,
 //@param: a *model.AutoCodeStruct
-//@return: error
+//@return: err error
 
 func AutoCreateApi(a *model.AutoCodeStruct) (err error) {
 	var apiList = []model.SysApi{
@@ -320,6 +321,11 @@ func AutoCreateApi(a *model.AutoCodeStruct) (err error) {
 }
 
 func getNeedList(autoCode *model.AutoCodeStruct) (dataList []tplData, fileList []string, needMkdir []string, err error) {
+	// 去除所有空格
+	utils.TrimSpace(autoCode)
+	for _, field := range autoCode.Fields {
+		utils.TrimSpace(field)
+	}
 	// 获取 basePath 文件夹下所有tpl文件
 	tplFileList, err := GetAllTplFile(basePath, nil)
 	if err != nil {
