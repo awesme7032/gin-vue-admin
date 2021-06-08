@@ -28,3 +28,11 @@ go.sum
 /server/latest_log
 
 *.iml
+
+# local file  don't need change
+web/.env.development
+web/src/main.js
+web/src/store/index.js
+web/vue.config.js
+
+

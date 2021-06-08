@@ -19,5 +19,14 @@ export const store = new Vuex.Store({
         router,
         dictionary
     },
+    state: {
+        imgPrefix: 'http://127.0.0.1:8888/',
+        uploadUrl: 'http://127.0.0.1:8888/uploadImg',
+        uploadFullUrl: "http://127.0.0.1:8888/uploadImgFull", // 不压缩的上传图片接口
+
+        // uploadFullUrl: "http://api.asfenfm.com/uploadImgFull", // 不压缩的上传图片接口
+        // imgPrefix: 'http://api.asfenfm.com/'
+        // uploadUrl: 'http://localhost:19000/uploadImg'
+    },
     plugins: [vuexLocal.plugin]
 })
