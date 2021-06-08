@@ -10,6 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
+////定义对应模型
+//var userModel model.SysUser
 
 //@author: [piexlmax](https://github.com/piexlmax)
 //@function: Register
@@ -76,7 +78,6 @@ func GetUserInfoList(info request.PageInfo) (err error, list interface{}, total 
 //@description: 设置一个用户的权限
 //@param: uuid uuid.UUID, authorityId string
 //@return: err error
-
 func SetUserAuthority(uuid uuid.UUID, authorityId string) (err error) {
 	err = global.GVA_DB.Where("uuid = ?", uuid).First(&model.SysUser{}).Update("authority_id", authorityId).Error
 	return err
@@ -125,7 +126,7 @@ func FindUserById(id int) (err error, user *model.SysUser) {
 
 func FindUserByUuid(uuid string) (err error, user *model.SysUser) {
 	var u model.SysUser
-	if err = global.GVA_DB.Where("`uuid` = ?", uuid).First(&u).Error; err != nil{
+	if err = global.GVA_DB.Where("`uuid` = ?", uuid).First(&u).Error; err != nil {
 		return errors.New("用户不存在"), &u
 	}
 	return nil, &u

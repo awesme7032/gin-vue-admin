@@ -59,7 +59,7 @@ func GetSysDictionaryDetail(id uint) (err error, sysDictionaryDetail model.SysDi
 func GetSysDictionaryDetailInfoList(info request.SysDictionaryDetailSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-	// 创建db
+	// 创建db Procedure
 	db := global.GVA_DB.Model(&model.SysDictionaryDetail{})
 	var sysDictionaryDetails []model.SysDictionaryDetail
 	// 如果有条件搜索 下方会自动创建搜索语句

@@ -18,4 +18,10 @@ type Server struct {
 	AliyunOSS  AliyunOSS  `mapstructure:"aliyun-oss" json:"aliyunOSS" yaml:"aliyun-oss"`
 	TencentCOS TencentCOS `mapstructure:"tencent-cos" json:"tencentCOS" yaml:"tencent-cos"`
 	Excel      Excel      `mapstructure:"excel" json:"excel" yaml:"excel"`
+	Timer      Timer      `mapstructure:"timer" json:"timer" yaml:"timer"`
+	File       struct {
+		RootPath   string `mapstructure:"RootPath"`
+		ReturnPath string `mapstructure:"ReturnPath"`
+		ImgPath    string `mapstructure:"ImgPath"`
+	} `mapstructure:"File"`
 }

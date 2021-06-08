@@ -65,7 +65,6 @@ func MergeFileMd5(md5 string, fileName string) (err error) {
 			_ = os.Remove(finishDir + fileName)
 		}
 	}
-
 	if err != nil {
 		return err
 	}

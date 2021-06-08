@@ -51,6 +51,7 @@ func Viper(path ...string) *viper.Viper {
 	if err := v.Unmarshal(&global.GVA_CONFIG); err != nil {
 		fmt.Println(err)
 	}
+	// 自动加载相关配置
 	global.GVA_CONFIG.AutoCode.Root, _ = filepath.Abs("..")
 	return v
 }

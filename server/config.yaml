@@ -85,3 +85,9 @@ zap:
   prefix: '[GIN-VUE-ADMIN]'
   show-line: true
   stacktrace-key: stacktrace
+File:
+  #  RootPath: /home/go/reward/upload
+#  RootPath: D:/upload/
+  RootPath: uploads/
+  ImgPath: img/
+  ReturnPath: http://localhost:8082/
